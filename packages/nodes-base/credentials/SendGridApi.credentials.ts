@@ -1,8 +1,4 @@
-import {
-	IAuthenticateGeneric,
-	ICredentialType,
-	INodeProperties,
-} from 'n8n-workflow';
+import { IAuthenticateGeneric, ICredentialType, INodeProperties } from 'n8n-workflow';
 
 export class SendGridApi implements ICredentialType {
 	name = 'sendGridApi';
@@ -16,12 +12,12 @@ export class SendGridApi implements ICredentialType {
 			default: '',
 		},
 	];
-	authenticate = {
+	authenticate: IAuthenticateGeneric = {
 		type: 'generic',
 		properties: {
 			headers: {
 				Authorization: '=Bearer {{$credentials.apiKey}}',
 			},
 		},
-	} as IAuthenticateGeneric;
+	};
 }

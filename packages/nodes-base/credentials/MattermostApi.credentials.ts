@@ -5,7 +5,6 @@ import {
 	INodeProperties,
 } from 'n8n-workflow';
 
-
 export class MattermostApi implements ICredentialType {
 	name = 'mattermostApi';
 	displayName = 'Mattermost API';
@@ -24,7 +23,10 @@ export class MattermostApi implements ICredentialType {
 			default: '',
 		},
 	];
-	async authenticate(credentials: ICredentialDataDecryptedObject, requestOptions: IHttpRequestOptions): Promise<IHttpRequestOptions> {
+	async authenticate(
+		credentials: ICredentialDataDecryptedObject,
+		requestOptions: IHttpRequestOptions,
+	): Promise<IHttpRequestOptions> {
 		requestOptions.headers!['Authorization'] = `Bearer ${credentials.accessToken}`;
 		return requestOptions;
 	}
