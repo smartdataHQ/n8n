@@ -1,13 +1,5 @@
 <template>
-	<div class="node-icon-wrapper" :style="iconStyleData">
-		<div v-if="nodeIconData !== null" class="icon">
-			<img v-if="nodeIconData.type === 'file'" :src="nodeIconData.fileBuffer || nodeIconData.path" :style="imageStyleData" />
-			<font-awesome-icon v-else :icon="nodeIconData.icon || nodeIconData.path" :style="fontStyleData" />
-		</div>
-		<div v-else class="node-icon-placeholder">
-			{{nodeType !== null ? nodeType.displayName.charAt(0) : '?' }}
-		</div>
-	</div>
+	<n8n-node-icon type="fontIcon" path="cogs" :size="200"></n8n-node-icon>
 </template>
 
 <script lang="ts">
@@ -40,45 +32,6 @@ export default Vue.extend({
 		},
 	},
 	computed: {
-		iconStyleData (): object {
-			const nodeType = this.nodeType as INodeTypeDescription | IVersionNode | null;
-			const color = nodeType ? nodeType.defaults && nodeType!.defaults.color : '';
-			if (!this.size) {
-				return {color};
-			}
-
-			return {
-				color,
-				width: this.size + 'px',
-				height: this.size + 'px',
-				'font-size': this.size + 'px',
-				'line-height': this.size + 'px',
-				'border-radius': this.circle ? '50%': '2px',
-				...(this.disabled && {
-					color: '#ccc',
-					'-webkit-filter': 'contrast(40%) brightness(1.5) grayscale(100%)',
-					'filter': 'contrast(40%) brightness(1.5) grayscale(100%)',
-				}),
-			};
-		},
-		fontStyleData (): object {
-			return {
-				'max-width': this.size + 'px',
-			};
-		},
-		imageStyleData (): object {
-			return {
-				width: '100%',
-				'max-width': '100%',
-				'max-height': '100%',
-			};
-		},
-		isSvgIcon (): boolean {
-			if (this.nodeIconData && this.nodeIconData.type === 'file' && this.nodeIconData.fileExtension === 'svg') {
-				return true;
-			}
-			return false;
-		},
 		nodeIconData (): null | NodeIconData {
 			const nodeType = this.nodeType as INodeTypeDescription | IVersionNode | null;
 			if (nodeType === null) {
