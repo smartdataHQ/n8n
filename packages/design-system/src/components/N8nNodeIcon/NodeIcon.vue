@@ -1,25 +1,34 @@
 <template>
 	<div>
-		<div class="node-icon-wrapper" :style="iconStyleData">
-			<div v-if="type !== unknown" class="icon">
-				<img v-if="type === 'file'" :src="path" :style="imageStyleData" />
-				<font-awesome-icon v-else :icon="path" :style="fontStyleData" />
-			</div>
-			<div v-else class="node-icon-placeholder">
-				{{ nodeTypeName !== null ? nodeTypeName.charAt(0) : '?' }}
-				?
-			</div>
+		<div
+			:class="$style['node-icon-wrapper']"
+			:style="iconStyleData"
+			@click="(e) => $emit('click')"
+		>
+			<n8n-tooltip placement="top" :disabled="!showTooltip">
+				<div slot="content" v-text="nodeTypeName"></div>
+				<div v-if="type !== 'unknown'" :class="$style['icon']">
+					<img v-if="type === 'file'" :src="path" :style="imageStyleData" />
+					<font-awesome-icon v-else :icon="path" :style="fontStyleData" />
+				</div>
+				<div v-else :class="$style['node-icon-placeholder']">
+					{{ nodeTypeName? nodeTypeName.charAt(0) : '?' }}
+					?
+				</div>
+			</n8n-tooltip>
 		</div>
 	</div>
 </template>
 
 <script lang="ts">
 import Vue from 'vue';
+import N8nTooltip from '../N8nTooltip';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 
 export default Vue.extend({
 	name: 'n8n-node-icon',
 	components: {
+		N8nTooltip,
 		FontAwesomeIcon,
 	},
 	props: {
@@ -27,7 +36,7 @@ export default Vue.extend({
 			type: String,
 			required: true,
 			validator: (value: string): boolean =>
-				['file', 'fontIcon', 'unknown'].includes(value),
+				['file', 'icon', 'unknown'].includes(value),
 		},
 		path: {
 			type: String,
@@ -39,12 +48,21 @@ export default Vue.extend({
 		},
 		size: {
 			type: Number,
+			required: false,
 		},
 		disabled: {
 			type: Boolean,
 			default: false,
 		},
 		circle: {
+			type: Boolean,
+			default: false,
+		},
+		color: {
+			type: String,
+			required: false,
+		},
+		showTooltip: {
 			type: Boolean,
 			default: false,
 		},
@@ -68,7 +86,7 @@ export default Vue.extend({
 					'-webkit-filter': 'contrast(40%) brightness(1.5) grayscale(100%)',
 					'filter': 'contrast(40%) brightness(1.5) grayscale(100%)',
 				}),
-			}
+			};
 		},
 		imageStyleData (): object { // TODO: To css
 			return {
@@ -82,7 +100,7 @@ export default Vue.extend({
 				'max-width': `${this.size}px`,
 			};
 		},
-	}
+	},
 });
 </script>
 
@@ -107,6 +125,7 @@ export default Vue.extend({
 	justify-content: center;
 	align-items: center;
 }
+
 .node-icon-placeholder {
 	text-align: center;
 }

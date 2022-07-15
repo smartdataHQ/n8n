@@ -24,7 +24,17 @@ FileIcon.args = {
 
 export const FontIcon = DefaultTemplate.bind({});
 FontIcon.args = {
-	type: 'fontIcon',
+	type: 'icon',
 	path: 'cogs',
 	size: 200,
+}
+
+export const Hoverable = DefaultTemplate.bind({});
+Hoverable.args = {
+	type: 'icon',
+	path: 'heart',
+	color: 'red',
+	size: 200,
+	nodeTypeName: 'We ❤️ n8n',
+	showTooltip: true,
 }
