@@ -268,6 +268,49 @@ export class KafkaExecutionLogger implements IKafkaExecutionLogger {
 	}
 
 	/**
+	 * Handle workflow execution cancel event
+	 */
+	async handleWorkflowCancel(context: WorkflowExecutionContext): Promise<void> {
+		if (!this.isInitialized || !this.config.enabled) {
+			return;
+		}
+
+		try {
+			const message = SegmentEventBuilder.buildWorkflowCancelEvent(context);
+			await this.processMessage(message);
+		} catch (error) {
+			const categorizedError = this.errorHandler.handleError(error as Error, {
+				operation: 'handleWorkflowCancel',
+				executionId: context.executionId,
+				workflowId: context.workflowData.id,
+			});
+
+			// For serialization errors, skip the message
+			if (categorizedError.category === ErrorCategory.serialization) {
+				this.logger.warn('Skipping workflow cancel event due to serialization error', {
+					executionId: context.executionId,
+					workflowId: context.workflowData.id,
+				});
+				return;
+			}
+
+			// For other errors, try fallback logging if enabled
+			if (categorizedError.shouldFallback) {
+				try {
+					const message = SegmentEventBuilder.buildWorkflowCancelEvent(context);
+					this.errorHandler.logToFallback(message, `Kafka error: ${categorizedError.category}`);
+				} catch (fallbackError) {
+					this.logger.error('Fallback logging failed for workflow cancel event', {
+						executionId: context.executionId,
+						workflowId: context.workflowData.id,
+						fallbackError,
+					});
+				}
+			}
+		}
+	}
+
+	/**
 	 * Register lifecycle hooks with the provided ExecutionLifecycleHooks instance
 	 * This method should be called during workflow execution setup
 	 */
@@ -327,11 +370,15 @@ export class KafkaExecutionLogger implements IKafkaExecutionLogger {
 
 				// Handle the workflow completion event asynchronously to avoid blocking execution
 				setImmediate(() => {
-					// Determine if this was an error or success completion
-					const handler =
-						runData.status === 'success'
-							? kafkaLogger.handleWorkflowComplete(executionContext)
-							: kafkaLogger.handleWorkflowError(executionContext);
+					// Determine the appropriate handler based on workflow status
+					let handler;
+					if (runData.status === 'success') {
+						handler = kafkaLogger.handleWorkflowComplete(executionContext);
+					} else if (runData.status === 'canceled') {
+						handler = kafkaLogger.handleWorkflowCancel(executionContext);
+					} else {
+						handler = kafkaLogger.handleWorkflowError(executionContext);
+					}
 
 					handler.catch((error: Error) => {
 						kafkaLogger.logger.error('Async error in workflow completion handler', {

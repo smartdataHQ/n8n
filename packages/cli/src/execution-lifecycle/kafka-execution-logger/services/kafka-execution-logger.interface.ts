@@ -54,4 +54,10 @@ export interface IKafkaExecutionLogger {
 	 * @param context Workflow execution context
 	 */
 	handleWorkflowError(context: WorkflowExecutionContext): Promise<void>;
+
+	/**
+	 * Handle workflow execution cancel event
+	 * @param context Workflow execution context
+	 */
+	handleWorkflowCancel(context: WorkflowExecutionContext): Promise<void>;
 }
