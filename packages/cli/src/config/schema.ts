@@ -2,6 +2,120 @@ import { GlobalConfig } from '@n8n/config';
 import { Container } from '@n8n/di';
 
 export const schema = {
+	kafka: {
+		logger: {
+			enabled: {
+				doc: 'Whether the Kafka logger is enabled',
+				format: Boolean,
+				default: false,
+				env: 'N8N_KAFKA_LOGGER_ENABLED',
+			},
+			brokers: {
+				doc: 'Array of Kafka broker addresses',
+				format: Array,
+				default: [],
+				env: 'N8N_KAFKA_LOGGER_BROKERS',
+			},
+			clientId: {
+				doc: 'Client ID for Kafka producer',
+				format: String,
+				default: 'n8n-execution-logger',
+				env: 'N8N_KAFKA_LOGGER_CLIENT_ID',
+			},
+			topic: {
+				doc: 'Kafka topic to publish execution logs to',
+				format: String,
+				default: 'n8n-executions',
+				env: 'N8N_KAFKA_LOGGER_TOPIC',
+			},
+			ssl: {
+				doc: 'Whether to use SSL for Kafka connection',
+				format: Boolean,
+				default: false,
+				env: 'N8N_KAFKA_LOGGER_SSL',
+			},
+			authentication: {
+				username: {
+					doc: 'Username for Kafka authentication',
+					format: String,
+					default: '',
+					env: 'N8N_KAFKA_LOGGER_AUTH_USERNAME',
+				},
+				password: {
+					doc: 'Password for Kafka authentication',
+					format: String,
+					default: '',
+					env: 'N8N_KAFKA_LOGGER_AUTH_PASSWORD',
+				},
+				mechanism: {
+					doc: 'Authentication mechanism for Kafka',
+					format: String,
+					default: 'plain',
+					env: 'N8N_KAFKA_LOGGER_AUTH_MECHANISM',
+				},
+			},
+			timeouts: {
+				disconnect: {
+					doc: 'Kafka disconnect timeout in ms',
+					format: Number,
+					default: 5000,
+					env: 'N8N_KAFKA_LOGGER_TIMEOUT_DISCONNECT',
+				},
+				connect: {
+					doc: 'Kafka connect timeout in ms',
+					format: Number,
+					default: 10000,
+					env: 'N8N_KAFKA_LOGGER_TIMEOUT_CONNECT',
+				},
+				send: {
+					doc: 'Kafka send timeout in ms',
+					format: Number,
+					default: 5000,
+					env: 'N8N_KAFKA_LOGGER_TIMEOUT_SEND',
+				},
+			},
+			circuitBreaker: {
+				failureThreshold: {
+					doc: 'Circuit breaker failure threshold',
+					format: Number,
+					default: 5,
+					env: 'N8N_KAFKA_LOGGER_CB_FAILURE_THRESHOLD',
+				},
+				resetTimeout: {
+					doc: 'Circuit breaker reset timeout in ms',
+					format: Number,
+					default: 60000,
+					env: 'N8N_KAFKA_LOGGER_CB_RESET_TIMEOUT',
+				},
+				monitoringPeriod: {
+					doc: 'Circuit breaker monitoring period in ms',
+					format: Number,
+					default: 30000,
+					env: 'N8N_KAFKA_LOGGER_CB_MONITORING_PERIOD',
+				},
+			},
+			queue: {
+				maxSize: {
+					doc: 'Max queue size',
+					format: Number,
+					default: 10000,
+					env: 'N8N_KAFKA_LOGGER_QUEUE_MAX_SIZE',
+				},
+				batchSize: {
+					doc: 'Batch size for processing',
+					format: Number,
+					default: 100,
+					env: 'N8N_KAFKA_LOGGER_QUEUE_BATCH_SIZE',
+				},
+				flushInterval: {
+					doc: 'Flush interval in ms',
+					format: Number,
+					default: 5000,
+					env: 'N8N_KAFKA_LOGGER_QUEUE_FLUSH_INTERVAL',
+				},
+			},
+		},
+	},
 	executions: {
 		mode: {
 			doc: 'If it should run executions directly or via queue',
@@ -174,6 +288,15 @@ export const schema = {
 			format: Boolean,
 			default: false,
 			env: 'N8N_AI_ENABLED',
+		},
+	},
+
+	runners: {
+		enabled: {
+			doc: 'Whether runners are enabled',
+			format: Boolean,
+			default: false,
+			env: 'N8N_RUNNERS_ENABLED',
 		},
 	},
 };

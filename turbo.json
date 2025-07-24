@@ -6,10 +6,10 @@
 		"timeout": 90,
 		"uploadTimeout": 90
 	},
-	"globalEnv": ["CI", "COVERAGE_ENABLED"],
+	"globalEnv": ["CI", "COVERAGE_ENABLED", "N8N_CONFIG_FILES"],
 	"tasks": {
 		"clean": {
-			"cache": false
+			"cache": true
 		},
 		"build:playwright": {
 			"dependsOn": ["install-browsers:ci", "build"]
@@ -144,7 +144,7 @@
 			"outputs": ["coverage/**", "junit.xml", "cobertura-coverage.xml"]
 		},
 		"watch": {
-			"cache": false,
+			"cache": true,
 			"persistent": true
 		},
 		"dev": {

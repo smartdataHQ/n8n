@@ -316,14 +316,15 @@ export class Start extends BaseCommand<z.infer<typeof flagsSchema>> {
 		}
 
 		await this.server.start();
+		Container.get(ExecutionsPruningService).init();
 
 		// Initialize Kafka Execution Logger integration service
+		/*
 		const { KafkaExecutionLoggerIntegrationService } = await import(
 			'@/execution-lifecycle/kafka-execution-logger'
 		);
 		Container.get(KafkaExecutionLoggerIntegrationService);
-
-		Container.get(ExecutionsPruningService).init();
+		 */
 
 		if (config.getEnv('executions.mode') === 'regular') {
 			await this.runEnqueuedExecutions();

@@ -1,0 +1,50 @@
+{
+  "database": {
+    "type": "postgresdb",
+    "postgresdb": {
+      "host": "localhost",
+      "port": 5432,
+      "database": "n8n",
+      "user": "postgres",
+      "password": "password"
+    }
+  },
+  "executions": {
+    "mode": "queue"
+  },
+  "queue": {
+    "bull": {
+      "redis": {
+        "host": "localhost",
+        "port": 6379
+      }
+    }
+  },
+  "runners": {
+    "enabled": true
+  },
+  "kafka": {
+    "logger": {
+      "enabled": true,
+      "brokers": ["localhost:9092"],
+      "clientId": "n8n-execution-logger",
+      "topic": "n8n-executions",
+      "ssl": false,
+      "queue": {
+        "maxSize": 10000,
+        "batchSize": 100,
+        "flushInterval": 5000
+      },
+      "circuitBreaker": {
+        "failureThreshold": 5,
+        "resetTimeout": 60000,
+        "monitoringPeriod": 30000
+      },
+      "timeouts": {
+        "connect": 10000,
+        "send": 5000,
+        "disconnect": 5000
+      }
+    }
+  }
+}
